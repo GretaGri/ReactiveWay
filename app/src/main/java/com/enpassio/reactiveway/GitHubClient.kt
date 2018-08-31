@@ -1,5 +1,6 @@
 package com.enpassio.reactiveway
 
+import com.enpassio.reactiveway.ServiceGenerator.gson
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
@@ -15,12 +16,14 @@ class GitHubClient private constructor() {
     private val gitHubService: GitHubService
 
     init {
-        val gson = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
-        val retrofit = Retrofit.Builder().baseUrl(GITHUB_BASE_URL)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build()
-        gitHubService = retrofit.create(GitHubService::class.java)
+        gitHubService = ServiceGenerator.createService(GitHubService::class.java)
+
+        //this code replaced by ServiceGenerator
+      //  val retrofit = Retrofit.Builder().baseUrl(GITHUB_BASE_URL)
+       //         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+       //         .addConverterFactory(GsonConverterFactory.create(gson))
+        //        .build()
+      //  gitHubService = retrofit.create(GitHubService::class.java)
     }
 
     fun getStarredRepos(userName: String): Observable<List<GitHubRepo>> {
@@ -29,7 +32,7 @@ class GitHubClient private constructor() {
 
     companion object {
 
-        private val GITHUB_BASE_URL = "https://api.github.com/"
+      //  private val GITHUB_BASE_URL = "https://api.github.com/"
 
         private var instance: GitHubClient? = null
 
