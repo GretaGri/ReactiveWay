@@ -1,11 +1,6 @@
 package com.enpassio.reactiveway
 
-import com.enpassio.reactiveway.ServiceGenerator.gson
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
+import com.enpassio.reactiveway.Model.GitHubRepo
 import rx.Observable
 
 /**

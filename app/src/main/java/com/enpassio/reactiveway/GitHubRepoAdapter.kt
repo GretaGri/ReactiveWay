@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import com.enpassio.reactiveway.Model.GitHubRepo
 
 /**
  * Created by Greta Grigutė on 2018-08-30.

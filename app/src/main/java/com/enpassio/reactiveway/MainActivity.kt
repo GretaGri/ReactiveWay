@@ -2,7 +2,6 @@ package com.enpassio.reactiveway
 
 import android.content.Intent
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
@@ -12,7 +11,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-import retrofit2.http.Url
+import com.enpassio.reactiveway.Model.AccessToken
+import com.enpassio.reactiveway.Model.GitHubRepo
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observer
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
@@ -36,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var editTextUsername: EditText
     lateinit var buttonSearch: Button
     lateinit var buttonAuthorise: Button
-    var uri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,36 +62,57 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                 })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val uri: Uri? = intent.data
+
+        Toast.makeText(this, "Url is: ${uri}",Toast.LENGTH_LONG).show()
 
         if (uri == null) {
+
             buttonSearch.visibility = View.VISIBLE
             editTextUsername.visibility = View.VISIBLE
 
             buttonSearch.setOnClickListener { view ->
-                    val username = editTextUsername.text.toString()
-                    if (!TextUtils.isEmpty(username)) {
-                        getStarredRepos(username)
-                    }}
-        }else{
-
-        }
-
-        buttonSearch.setOnClickListener { view ->
                 val username = editTextUsername.text.toString()
                 if (!TextUtils.isEmpty(username)) {
                     getStarredRepos(username)
                 }
             }
 
-        listView = findViewById(R.id.list_view_repos)
-        listView.setAdapter(adapter);
-    }
+            listView = findViewById(R.id.list_view_repos)
+            listView.setAdapter(adapter);
 
-    override fun onResume() {
-        uri  = intent.data
+        } else if (uri != null && uri.toString().startsWith(redirecturi)) {
 
-        Toast.makeText(this, "Url is: ${uri}",Toast.LENGTH_LONG).show()
-        super.onResume()
+            val code: String? = uri.getQueryParameter("code")
+
+            val builder = Retrofit.Builder()
+                    .baseUrl("https://github.com/")
+                    .addConverterFactory(GsonConverterFactory.create(ServiceGenerator.gson))
+
+            val retrofit = builder.build()
+
+            val client: GitHubService = retrofit.create(GitHubService::class.java)
+            val accessTokenCall: Call<AccessToken> = client.getAccessToken(
+                    clientId,
+                    clientSecret,
+                    code!!
+            )
+
+            accessTokenCall.enqueue(object : Callback<AccessToken> {
+                override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
+                    val resource = response?.body()
+                    Toast.makeText(this@MainActivity, "Yay, got the respose: ${resource}", Toast.LENGTH_LONG).show()
+                }
+
+                override fun onFailure(call: Call<AccessToken>, t: Throwable?) {
+                    Toast.makeText(this@MainActivity, "Fail", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
     }
 
     override fun onDestroy() {
@@ -118,8 +143,4 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
     }
-}
-
-private fun Button.setOnClickListener() {
-
 }

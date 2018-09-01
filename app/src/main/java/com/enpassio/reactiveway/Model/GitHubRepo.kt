@@ -1,4 +1,4 @@
-package com.enpassio.reactiveway
+package com.enpassio.reactiveway.Model
 
 /**
  * Created by Greta Grigutė on 2018-08-30.
