@@ -1,21 +1,14 @@
 package com.enpassio.reactiveway
 
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import android.provider.ContactsContract.CommonDataKinds.Note
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Predicate
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.internal.disposables.DisposableHelper.isDisposed
-import android.provider.ContactsContract.CommonDataKinds.Note
-import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +18,7 @@ class MainActivity : AppCompatActivity() {
      * https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/
      *
      * Basic Observable, Observer, Subscriber, Disposable, Operators, CompositeDisposable and
-     * DisposableObservercustom data type - example 1, 2, 3, 4, 5
+     * DisposableObserver, custom data type - example 1, 2, 3, 4, 5
      *
      * The observable emits custom data type (Note) instead of primitive data types
      * .map() operator is used to turn the note into all uppercase letters
@@ -49,8 +42,27 @@ class MainActivity : AppCompatActivity() {
                 // Making the note to all uppercase
                 .map{note:Note -> Note(note.id, note.note.toUpperCase())}
                 .subscribeWith(getNotesObserver()))
+
+       val numbers = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+
+        Observable.fromArray(*numbers)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getIntObserver())
     }
 
+    private fun getIntObserver(): DisposableObserver<Int> {
+        return object : DisposableObserver<Int>() {
+            override fun onNext(t: Int) {
+                Log.d(TAG, "Number: " + t)
+            }
+
+            override fun onError(e: Throwable) {}
+
+            override fun onComplete() {
+                Log.d(TAG, "All numbers emitted!")
+            }
+        }}
 
     private fun getNotesObserver(): DisposableObserver<Note> {
         return object : DisposableObserver<Note>() {
@@ -69,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun getNotesObservable(): Observable<Note> {
         val notes = prepareNotes()
