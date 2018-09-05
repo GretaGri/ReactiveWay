@@ -7,11 +7,10 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.internal.util.NotificationLite.disposable
 import io.reactivex.internal.disposables.DisposableHelper.dispose
-
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,9 +19,10 @@ class MainActivity : AppCompatActivity() {
      * from source: https://www.androidhive.info/RxJava/tutorials/
      * https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/
      *
-     * Basic Observable, Observer, Subscriber, Disposable example 1, 2
+     * Basic Observable, Observer, Subscriber, Disposable, Operators example 1, 2, 3
      * Observable emits list of animal names
      * Added Disposable
+     * Added operator - filter()
      */
 
     companion object {
@@ -48,13 +48,25 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 // observeOn(AndroidSchedulers.mainThread()): This tells the Observer to receive
                 // the data on Android UI thread so that you can take any UI related actions.
+                //filter() operator filters the data by applying a conditional statement. The data
+                // which meets the condition will be emitted and the remaining will be ignored.
+                .filter(object : Predicate<String> {
+                    @Throws(Exception::class)
+                    override fun test(s: String): Boolean {
+                        return s.toLowerCase().startsWith("b")
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(animalsObserver)
     }
 
     private fun getAnimalsObservable(): Observable<String> {
-        return Observable.just("Ant", "Bee", "Cat", "Dog",
-                "Fox")
+        return Observable.fromArray(
+                "Ant", "Ape",
+                "Bat", "Bee", "Bear", "Butterfly",
+                "Cat", "Crab", "Cod",
+                "Dog", "Dove",
+                "Fox", "Frog");
     }
 
     private fun getAnimalsObserver(): Observer<String> {
@@ -81,7 +93,6 @@ class MainActivity : AppCompatActivity() {
             override fun onComplete() {
                 Log.d(TAG, "All items are emitted!")
             }
-
         }
     }
 
