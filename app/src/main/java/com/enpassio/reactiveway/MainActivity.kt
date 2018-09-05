@@ -5,8 +5,12 @@ import android.provider.ContactsContract.CommonDataKinds.Note
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Predicate
+import io.reactivex.internal.operators.flowable.FlowableBlockingSubscribe.subscribe
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 // Making the note to all uppercase
-                .map{note:Note -> Note(note.id, note.note.toUpperCase())}
+                .map { note: Note -> Note(note.id, note.note.toUpperCase()) }
                 .subscribeWith(getNotesObserver()))
 
         //Example for operators - writing values manually:
@@ -58,24 +62,66 @@ class MainActivity : AppCompatActivity() {
 
         //https://www.androidhive.info/RxJava/rxjava-operators-introduction/
         // Instead of writing the array of numbers manually, you can do the same using range(1, 20) operator as below.
-        Observable.range(1,20)
+
+        Observable.range(1, 20) //range() operator generates the numbers from 1 to 20
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getIntObserver())
+
+        // Emitting numbers from 1 to 20. But in this case we want to filter out the even numbers
+        // along with we want to append a string at the end of each number.
+        Observable.range(1, 20) //range() operator generates the numbers from 1 to 20
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                //filter(): Filters the numbers by applying a condition onto each number
+                .filter(object : Predicate<Int> {
+                    @Throws(Exception::class)
+                    override fun test(integer: Int): Boolean {
+                        return integer % 2 == 0
+                    }
+                })
+                //map(): Map transform the data from Integer to String by appending the string at
+                // the end
+                .map {integer: Int -> "${integer} is even number" }
+                .subscribe(getStringObserver())
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
         return object : DisposableObserver<Int>() {
+
             override fun onNext(t: Int) {
                 Log.d(TAG, "Number: " + t)
             }
 
-            override fun onError(e: Throwable) {}
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
 
             override fun onComplete() {
                 Log.d(TAG, "All numbers emitted!")
             }
-        }}
+        }
+    }
+
+    private fun getStringObserver(): Observer<String> {
+        return object : Observer<String> {
+            override fun onSubscribe(d: Disposable) {
+
+            }
+
+            override fun onNext(text: String) {
+                Log.d(TAG, "Number: " + text)
+            }
+
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
+
+            override fun onComplete() {
+                Log.d(TAG, "All numbers emitted!")
+            }
+        }
+    }
 
     private fun getNotesObserver(): DisposableObserver<Note> {
         return object : DisposableObserver<Note>() {
@@ -83,10 +129,12 @@ class MainActivity : AppCompatActivity() {
             override fun onNext(note: Note) {
                 Log.d(TAG, "Note: " + note.note)
             }
+
             //onError(): In case of any error, onError() method will be called.
             override fun onError(e: Throwable) {
                 Log.e(TAG, "onError: " + e.message)
             }
+
             //onComplete(): When an Observable completes the emission of all the items,
             // onCompleted() will be called.
             override fun onComplete() {
