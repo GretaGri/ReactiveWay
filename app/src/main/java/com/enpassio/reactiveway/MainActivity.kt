@@ -1,7 +1,6 @@
 package com.enpassio.reactiveway
 
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.Observable
@@ -10,7 +9,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Predicate
-import io.reactivex.internal.operators.flowable.FlowableBlockingSubscribe.subscribe
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
@@ -31,6 +29,12 @@ class MainActivity : AppCompatActivity() {
      * https://www.androidhive.info/RxJava/rxjava-operators-introduction/
      *
      * Example of range() operator usage
+     * Example of filter() and map() operators used together
+     *
+     * ----------
+     * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#just
+     *
+     * Example of just() operator
      */
 
     companion object {
@@ -82,8 +86,32 @@ class MainActivity : AppCompatActivity() {
                 })
                 //map(): Map transform the data from Integer to String by appending the string at
                 // the end
-                .map {integer: Int -> "${integer} is even number" }
+                .map { integer: Int -> "${integer} is even number" }
                 .subscribe(getStringObserver())
+
+        //1. https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#just
+        //Just() operator takes a list of arguments and converts the items into Observable items.
+        //It takes arguments between one to ten. Example: an Observable is created using just() from
+        // a series of integers. The limitation of just() is, you can’t pass more than 10 arguments.
+
+        Observable.just(1, 2, 3, 4, 5, 6, 7, 8,
+                9, 10)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+
+                    override fun onComplete() {
+                    }
+                })
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
