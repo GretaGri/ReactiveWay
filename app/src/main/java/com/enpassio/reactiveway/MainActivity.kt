@@ -14,7 +14,7 @@ import io.reactivex.schedulers.Schedulers
 class MainActivity : AppCompatActivity() {
 
     /**
-     * from source: https://www.androidhive.info/RxJava/tutorials/
+     * from sources: https://www.androidhive.info/RxJava/tutorials/
      * https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/
      *
      * Basic Observable, Observer, Subscriber, Disposable, Operators, CompositeDisposable and
@@ -22,6 +22,11 @@ class MainActivity : AppCompatActivity() {
      *
      * The observable emits custom data type (Note) instead of primitive data types
      * .map() operator is used to turn the note into all uppercase letters
+     *
+     * ----------
+     * https://www.androidhive.info/RxJava/rxjava-operators-introduction/
+     *
+     * Example of range() operator usage
      */
 
     companion object {
@@ -43,9 +48,17 @@ class MainActivity : AppCompatActivity() {
                 .map{note:Note -> Note(note.id, note.note.toUpperCase())}
                 .subscribeWith(getNotesObserver()))
 
-       val numbers = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+        //Example for operators - writing values manually:
+        val numbers = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
 
         Observable.fromArray(*numbers)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(getIntObserver())
+
+        //https://www.androidhive.info/RxJava/rxjava-operators-introduction/
+        // Instead of writing the array of numbers manually, you can do the same using range(1, 20) operator as below.
+        Observable.range(1,20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(getIntObserver())
