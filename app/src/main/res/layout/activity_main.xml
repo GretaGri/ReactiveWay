@@ -5,41 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_authorise"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_medium"
-        android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginRight="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium"
-        android:text="@string/authorise_user"/>
+        android:layout_height="match_parent"
+        android:textSize="@dimen/text_size_heading"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:text="@string/first_rxjava_example"/>
 
-    <ListView
-        android:id="@+id/list_view_repos"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/edit_text_username"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/username"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/button_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search"
-            android:visibility="gone"/>
-
-    </LinearLayout>
 </LinearLayout>

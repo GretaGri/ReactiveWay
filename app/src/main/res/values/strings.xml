@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">ReactiveWay</string>
-    <string name="username">Username</string>
-    <string name="search">Search</string>
-    <string name="authorise_user">Authorise user</string>
+    <string name="first_rxjava_example">First RxJava example: results in Log.d</string>
 </resources>

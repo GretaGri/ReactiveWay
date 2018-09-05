@@ -1,146 +1,80 @@
 package com.enpassio.reactiveway
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.text.TextUtils
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.Toast
-import com.enpassio.reactiveway.Model.AccessToken
-import com.enpassio.reactiveway.Model.GitHubRepo
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import rx.Observer
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+
 
 class MainActivity : AppCompatActivity() {
+
+    /**
+     * from source: https://www.androidhive.info/RxJava/tutorials/
+     * https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/
+     *
+     * Basic Observable, Observer, Subscriber example 1
+     * Observable emits list of animal names
+     */
 
     companion object {
         val TAG = MainActivity::class.java.simpleName
     }
 
-    val adapter = GitHubRepoAdapter()
-
-    private val redirecturi = "com.enpassio.reactiveway://callbackurl"
-
-    private val clientId = BuildConfig.CLIENT_ID
-    private val clientSecret = BuildConfig.CLIENT_SECRET
-
-    var subscription: Subscription?= null
-    lateinit var listView: ListView
-    lateinit var editTextUsername: EditText
-    lateinit var buttonSearch: Button
-    lateinit var buttonAuthorise: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        buttonAuthorise = findViewById(R.id.button_authorise)
-        editTextUsername = findViewById(R.id.edit_text_username)
-        buttonSearch = findViewById(R.id.button_search)
+        //Observable
+        val animalsObservable = getAnimalsObservable()
 
-        buttonAuthorise.setOnClickListener(
-                object : View.OnClickListener {
-                    override fun onClick(v: View) {
-                        val intent = Intent (Intent.ACTION_VIEW,
-                                Uri.parse("https://github.com/login/oauth/authorize"
-                                        +"?client_id="
-                                        + clientId
-                                        + "&scope=repo&redirect_uri="
-                                        + redirecturi))
-                        startActivity(intent)
-                    }
-                })
+        //Observer
+        val animalsObserver = getAnimalsObserver()
+
+        //Observer subscribing to observable
+        animalsObservable
+                //subscribeOn(Schedulers.io()): This tell the Observable to run the task on a
+                // background thread.
+                .subscribeOn(Schedulers.io())
+                // observeOn(AndroidSchedulers.mainThread()): This tells the Observer to receive
+                // the data on android UI thread so that you can take any UI related actions.
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(animalsObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-        val uri: Uri? = intent.data
+    private fun getAnimalsObservable(): Observable<String> {
+        return Observable.just("Ant", "Bee", "Cat", "Dog",
+                "Fox")
+    }
 
-        Toast.makeText(this, "Url is: ${uri}",Toast.LENGTH_LONG).show()
+    private fun getAnimalsObserver(): Observer<String> {
+        return object : Observer<String> {
 
-        if (uri == null) {
-
-            buttonSearch.visibility = View.VISIBLE
-            editTextUsername.visibility = View.VISIBLE
-
-            buttonSearch.setOnClickListener { view ->
-                val username = editTextUsername.text.toString()
-                if (!TextUtils.isEmpty(username)) {
-                    getStarredRepos(username)
-                }
+            //onSubscribe(): Method will be called when an Observer subscribes to Observable.
+            override fun onSubscribe(d: Disposable) {
+                Log.d(TAG, "onSubscribe")
             }
 
-            listView = findViewById(R.id.list_view_repos)
-            listView.setAdapter(adapter);
+            //onNext(): This method will be called when Observable starts emitting the data.
+            override fun onNext(s: String) {
+                Log.d(TAG, "Name: $s")
+            }
 
-        } else if (uri != null && uri.toString().startsWith(redirecturi)) {
+            //onError(): In case of any error, onError() method will be called.
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
 
-            val code: String? = uri.getQueryParameter("code")
+            //onComplete(): When an Observable completes the emission of all the items,
+            // onCompleted() will be called.
+            override fun onComplete() {
+                Log.d(TAG, "All items are emitted!")
+            }
 
-            val builder = Retrofit.Builder()
-                    .baseUrl("https://github.com/")
-                    .addConverterFactory(GsonConverterFactory.create(ServiceGenerator.gson))
-
-            val retrofit = builder.build()
-
-            val client: GitHubService = retrofit.create(GitHubService::class.java)
-            val accessTokenCall: Call<AccessToken> = client.getAccessToken(
-                    clientId,
-                    clientSecret,
-                    code!!
-            )
-
-            accessTokenCall.enqueue(object : Callback<AccessToken> {
-                override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>?) {
-                    val resource = response?.body()
-                    Toast.makeText(this@MainActivity, "Yay, got the respose: ${resource}", Toast.LENGTH_LONG).show()
-                }
-
-                override fun onFailure(call: Call<AccessToken>, t: Throwable?) {
-                    Toast.makeText(this@MainActivity, "Fail", Toast.LENGTH_LONG).show()
-                }
-            })
         }
     }
 
-    override fun onDestroy() {
-        if (subscription != null && !subscription!!.isUnsubscribed()) {
-            subscription!!.unsubscribe()
-        }
-        super.onDestroy()
-    }
-
-    private fun getStarredRepos(username: String) {
-        subscription = GitHubClient.getInstance()
-                .getStarredRepos(username)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<List<GitHubRepo>> {
-                    override fun onCompleted() {
-                        Log.d(TAG, "In onCompleted()")
-                    }
-
-                    override fun onError(e: Throwable) {
-                        e.printStackTrace()
-                        Log.d(TAG, "In onError()")
-                    }
-
-                    override fun onNext(gitHubRepos: List<GitHubRepo>) {
-                        Log.d(TAG, "In onNext()")
-                        adapter.setGitHubRepos(gitHubRepos)
-                    }
-                })
-    }
 }
