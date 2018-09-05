@@ -1,8 +1,10 @@
 package com.enpassio.reactiveway
 
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.enpassio.reactiveway.R.id.always
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -104,6 +106,28 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onNext(integer: Int) {
                         Log.d(TAG, "onNext: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+
+                    override fun onComplete() {
+                    }
+                })
+
+        // the below example creates an Observable from an array. The array is emitted as single
+        // item instead of individual numbers. The Observer emits the array onNext(Integer[]
+        // integers) so you will always have 1 emission irrespective of length of the array
+        Observable.just(numbers)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<Array<Int>> {
+                    override fun onSubscribe(d: Disposable) {
+                    }
+
+                    override fun onNext(integers: Array<Int>) {
+                        Log.d(TAG, "onNext: Array size is " + integers.size)
+                        // you might have to loop through the array
                     }
 
                     override fun onError(e: Throwable) {
