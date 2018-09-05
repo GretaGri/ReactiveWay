@@ -8,6 +8,10 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.internal.util.NotificationLite.disposable
+import io.reactivex.internal.disposables.DisposableHelper.dispose
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -16,13 +20,16 @@ class MainActivity : AppCompatActivity() {
      * from source: https://www.androidhive.info/RxJava/tutorials/
      * https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/
      *
-     * Basic Observable, Observer, Subscriber example 1
+     * Basic Observable, Observer, Subscriber, Disposable example 1, 2
      * Observable emits list of animal names
+     * Added Disposable
      */
 
     companion object {
         val TAG = MainActivity::class.java.simpleName
     }
+
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 // background thread.
                 .subscribeOn(Schedulers.io())
                 // observeOn(AndroidSchedulers.mainThread()): This tells the Observer to receive
-                // the data on android UI thread so that you can take any UI related actions.
+                // the data on Android UI thread so that you can take any UI related actions.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(animalsObserver)
     }
@@ -56,6 +63,7 @@ class MainActivity : AppCompatActivity() {
             //onSubscribe(): Method will be called when an Observer subscribes to Observable.
             override fun onSubscribe(d: Disposable) {
                 Log.d(TAG, "onSubscribe")
+                disposable = d
             }
 
             //onNext(): This method will be called when Observable starts emitting the data.
@@ -77,4 +85,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //Don't send events once the activity is destroyed
+        disposable!!.dispose()
+    }
 }
