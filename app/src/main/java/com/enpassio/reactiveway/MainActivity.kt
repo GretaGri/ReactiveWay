@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
      * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#just
      *
      * Example of just() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#from
+     * Example of fromArray () operator
      */
 
     companion object {
@@ -128,6 +131,24 @@ class MainActivity : AppCompatActivity() {
                     override fun onNext(integers: Array<Int>) {
                         Log.d(TAG, "onNext: Array size is " + integers.size)
                         // you might have to loop through the array
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+
+                    override fun onComplete() {
+                    }
+                })
+        //fromArray() operator as in RxJava2 we have don’t have from().
+        Observable.fromArray(numbers)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object: Observer<Array<Int>> {
+                    override fun onSubscribe(d: Disposable) {
+                    }
+
+                    override fun onNext(array: Array<Int>) {
+                        Log.d(TAG, "onNext: " + array.size)
                     }
 
                     override fun onError(e: Throwable) {
