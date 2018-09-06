@@ -1,10 +1,10 @@
 package com.enpassio.reactiveway
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.enpassio.reactiveway.R.id.always
+import android.widget.Button
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -39,10 +39,16 @@ class MainActivity : AppCompatActivity() {
      * Example of just() operator
      *
      * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#from
-     * Example of fromArray () operator
+     * Example of fromArray() operator
      *
      * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#range
-     * Example of range (0 operator
+     * Example of range() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#repeat
+     * Example of repeat() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/#buffer
+     * Example of buffer() operator
      */
 
     companion object {
@@ -54,6 +60,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val buttonGoToBufferExample = findViewById(R.id.button_buffer) as Button
+        buttonGoToBufferExample.setOnClickListener{
+           val i = Intent(this, BufferActivity::class.java)
+            startActivity(i)
+        }
+
 
         // add to Composite observable
         // .map() operator is used to turn the note into all uppercase letters
@@ -110,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for just operator from integers example")
                     }
 
                     override fun onNext(integer: Int) {
@@ -131,6 +145,7 @@ class MainActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<Array<Int>> {
                     override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for just operator from array example")
                     }
 
                     override fun onNext(integers: Array<Int>) {
@@ -148,8 +163,9 @@ class MainActivity : AppCompatActivity() {
         Observable.fromArray(numbers)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object: Observer<Array<Int>> {
+                .subscribe(object : Observer<Array<Int>> {
                     override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for fromArray operator example")
                     }
 
                     override fun onNext(array: Array<Int>) {
@@ -171,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                 .repeat(3)
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {
-                        Log.d(TAG, "Subscribed")
+                        Log.d(TAG, "onSubscribe for repeat operator example")
                     }
 
                     override fun onNext(integer: Int) {
@@ -183,6 +199,36 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onComplete() {
                         Log.d(TAG, "Completed")
+                    }
+                })
+
+        //Buffer gathers items emitted by an Observable into batches and emit the batch instead of
+        // emitting one item at a time.
+        // Below, we have an Observable that emits integers from 1-9. When buffer(3) is used,
+        // it emits 3 integers at a time.
+        val integerObservable = Observable.just(1, 2, 3, 4,
+                5, 6, 7, 8, 9)
+
+        integerObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .buffer(3)
+                .subscribe(object : Observer<List<Int>> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for buffer operator example")
+                    }
+
+                    override fun onNext(integers: List<Int>) {
+                        Log.d(TAG, "onNext")
+                        for (integer in integers) {
+                            Log.d(TAG, "Item: $integer")
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "All items emitted!")
                     }
                 })
     }
@@ -207,7 +253,7 @@ class MainActivity : AppCompatActivity() {
     private fun getStringObserver(): Observer<String> {
         return object : Observer<String> {
             override fun onSubscribe(d: Disposable) {
-
+                Log.d(TAG, "onSubscribe for filter and map operators combined example")
             }
 
             override fun onNext(text: String) {

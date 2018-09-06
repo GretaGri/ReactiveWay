@@ -7,10 +7,20 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
         android:textSize="@dimen/text_size_heading"
         android:textColor="@color/colorAccent"
         android:gravity="center"
         android:text="@string/first_rxjava_example"/>
 
+    <Button
+        android:id="@+id/button_buffer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="@dimen/text_size_heading"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:text="@string/go_to_buffer"/>
 </LinearLayout>

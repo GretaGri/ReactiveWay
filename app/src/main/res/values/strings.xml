@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">ReactiveWay</string>
     <string name="first_rxjava_example">First RxJava example: results in Log.d</string>
+    <string name="go_to_buffer">Go to buffer example</string>
+    <string name="tap_repeatedly_here">Tap repeatedly here!</string>
 </resources>

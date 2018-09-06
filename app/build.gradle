@@ -55,4 +55,7 @@ dependencies {
 
     //adding RecyclerView dependency
     implementation 'com.android.support:recyclerview-v7:28.0.0-rc01'
+
+    //RxBinding library
+    implementation 'com.jakewharton.rxbinding2:rxbinding-appcompat-v7:2.1.1'
 }
