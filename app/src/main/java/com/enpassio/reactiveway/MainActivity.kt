@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
      *
      * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#from
      * Example of fromArray () operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/#range
+     * Example of range (0 operator
      */
 
     companion object {
@@ -70,7 +73,9 @@ class MainActivity : AppCompatActivity() {
                 .subscribe(getIntObserver())
 
         //https://www.androidhive.info/RxJava/rxjava-operators-introduction/
-        // Instead of writing the array of numbers manually, you can do the same using range(1, 20) operator as below.
+        // Instead of writing the array of numbers manually, you can do the same using range(1, 20)
+        // operator as below. Range() creates an Observable from a sequence of generated integers.
+        // The function generates sequence of integers by taking starting number and length.
 
         Observable.range(1, 20) //range() operator generates the numbers from 1 to 20
                 .subscribeOn(Schedulers.io())
@@ -155,6 +160,29 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onComplete() {
+                    }
+                })
+
+        // Repeat() creates an Observable that emits an item or series of items repeatedly. You can
+        // also pass an argument to limit the number of repetitions.
+        // The below example repeats the emission of integers from 1-4 three times using repeat(3).
+        Observable
+                .range(1, 4)
+                .repeat(3)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed")
                     }
                 })
     }
