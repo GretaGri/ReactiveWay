@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
 
         button_buffer.setOnClickListener{
-           val i = Intent(this, BufferActivity::class.java)
+           val i = Intent(this, BufferDebounceActivity::class.java)
             startActivity(i)
         }
 

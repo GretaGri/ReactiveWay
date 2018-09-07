@@ -23,6 +23,7 @@ _____________________________________________________________
 1. https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/#example3 (done)
 2. https://www.androidhive.info/RxJava/rxjava-operators-introduction/ (done)
 3. https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/ (done)
-4. https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/ (half way)
+4. https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/ (done)
+5. https://www.androidhive.info/RxJava/rxjava-understanding-observables/ (done)
 
 

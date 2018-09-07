@@ -115,7 +115,7 @@ class ObserverActivity : AppCompatActivity() {
          *
          * Flowable can be used when the source is generating 10k+ events and subscriber
          * can’t consume it all.
-         * 
+         *
          * In the below example, Flowable is emitting numbers from 1-100 and reduce operator is used
          * to add all the numbers and emit the final value.
          */
