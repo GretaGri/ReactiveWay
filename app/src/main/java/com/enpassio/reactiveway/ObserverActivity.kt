@@ -66,6 +66,23 @@ class ObserverActivity : AppCompatActivity() {
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(singleObserver)
+
+        /**
+         * Maybe and MaybeObserver
+         * -
+         * Maybe observable may or may not emits a value. This observable can be used when you are
+         * expecting an item to be emitted optionally.
+         *
+         * An example of usage - getting a note from db using ID - there is possibility of not
+         * finding the note by ID in the db in this situation, Maybe can be used.
+         */
+        val noteObservableMaybe = getNoteObservableMaybe()
+
+        val maybeObserver = getMaybeObserver()
+
+        noteObservableMaybe.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(maybeObserver)
     }
 
     private fun getNotesObserver(): Observer<Note> {
@@ -101,7 +118,7 @@ class ObserverActivity : AppCompatActivity() {
             // received in onSuccess(Note note) method.
 
             override fun onSuccess(note: Note) {
-                Log.e(TAG, "onSuccess Single observable example: " + note.note)
+                Log.d(TAG, "onSuccess Single observable example: " + note.note)
             }
 
             override fun onError(e: Throwable) {
@@ -109,6 +126,27 @@ class ObserverActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun getMaybeObserver(): MaybeObserver<Note> {
+        return object : MaybeObserver<Note> {
+            override fun onSubscribe(d: Disposable) {
+                disposable = d
+            }
+
+            override fun onSuccess(note: Note) {
+                Log.d(TAG, "onSuccess Maybe example: " + note.note)
+            }
+
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
+
+            override fun onComplete() {
+                Log.d(TAG, "onComplete Maybe example")
+            }
+        }
+    }
+
 
     private fun getNotesObservable(): Observable<Note> {
         val notes = prepareNotes()
@@ -132,6 +170,19 @@ class ObserverActivity : AppCompatActivity() {
             val note = Note(1, "Buy milk!")
             emitter.onSuccess(note)
         })
+    }
+
+    /**
+     * Emits optional data (0 or 1 emission)
+     * But for now it emits 1 Note always
+     */
+    private fun getNoteObservableMaybe(): Maybe<Note> {
+        return Maybe.create { emitter ->
+            val note = Note(1, "Call brother!")
+            if (!emitter.isDisposed) {
+                emitter.onSuccess(note)
+            }
+        }
     }
 
     private fun prepareNotes(): List<Note> {
