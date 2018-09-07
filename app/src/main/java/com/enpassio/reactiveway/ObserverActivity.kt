@@ -3,8 +3,8 @@ package com.enpassio.reactiveway
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import io.reactivex.*
 import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -42,6 +42,30 @@ class ObserverActivity : AppCompatActivity() {
         notesObservable.observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(notesObserver)
+
+        /**
+         * Single and SingleObserver
+         * -
+         * Single always emits only one value or throws an error. The same job can be done using
+         * Observable too with a single emission but Single always makes sure there is an emission.
+         *
+         * A use case of Single would be making a network call to get response as the response will
+         * be fetched at once.
+         *
+         * Another example could be fetching a Note from database by its Id. Also we need to make
+         * sure that the Note is present in database as Single should always emit a value.
+         *
+         * Notice here, the SingleObserver doesn’t have onNext() to emit the data, instead the
+         * data will be received in onSuccess(Note note) method.
+         */
+        val noteObservableSingle = getNoteObservableSingle()
+
+        val singleObserver = getSingleObserver()
+
+        noteObservableSingle
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(singleObserver)
     }
 
     private fun getNotesObserver(): Observer<Note> {
@@ -67,6 +91,25 @@ class ObserverActivity : AppCompatActivity() {
 
     }
 
+    private fun getSingleObserver(): SingleObserver<Note> {
+        return object : SingleObserver<Note> {
+            override fun onSubscribe(d: Disposable) {
+                Log.d(TAG, "onSubscribe")
+                disposable = d
+            }
+            // the Single Observer doesn’t have onNext() to emit the data, instead the data will be
+            // received in onSuccess(Note note) method.
+
+            override fun onSuccess(note: Note) {
+                Log.e(TAG, "onSuccess Single observable example: " + note.note)
+            }
+
+            override fun onError(e: Throwable) {
+                Log.d(TAG, "onError: " + e.message)
+            }
+        }
+    }
+
     private fun getNotesObservable(): Observable<Note> {
         val notes = prepareNotes()
 
@@ -81,6 +124,13 @@ class ObserverActivity : AppCompatActivity() {
             if (!emitter.isDisposed) {
                 emitter.onComplete()
             }
+        })
+    }
+
+    private fun getNoteObservableSingle(): Single<Note> {
+        return Single.create(SingleOnSubscribe<Note> { emitter ->
+            val note = Note(1, "Buy milk!")
+            emitter.onSuccess(note)
         })
     }
 
