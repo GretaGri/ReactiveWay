@@ -10,6 +10,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import io.reactivex.CompletableObserver
+import android.provider.ContactsContract.CommonDataKinds.Note
+import android.support.v4.app.FragmentActivity
+import io.reactivex.internal.disposables.DisposableHelper.isDisposed
+import io.reactivex.CompletableEmitter
+import io.reactivex.internal.util.NotificationLite.disposable
+
+
+
+
+
+
 
 
 class ObserverActivity : AppCompatActivity() {
@@ -83,6 +95,25 @@ class ObserverActivity : AppCompatActivity() {
         noteObservableMaybe.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(maybeObserver)
+
+        /**
+         * Completable and CompletableObserver
+         * -
+         * Completable observable won’t emit any data instead it notifies the status of the task
+         * either success or failure. This observable can be used when you want to perform some task
+         * and not expect any value. A use case would be updating some data on the server by making
+         * PUT request.
+         */
+        val note = Note(1, "Home work!")
+
+        val completableObservable = updateNote(note)
+
+        val completableObserver = getCompletableObserver()
+
+        completableObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(completableObserver)
     }
 
     private fun getNotesObserver(): Observer<Note> {
@@ -147,6 +178,24 @@ class ObserverActivity : AppCompatActivity() {
         }
     }
 
+    private fun getCompletableObserver(): CompletableObserver {
+        return object : CompletableObserver {
+            override fun onSubscribe(d: Disposable) {
+                Log.d(TAG, "onSubscribe")
+                disposable = d
+            }
+
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
+
+            override fun onComplete() {
+                Log.d(TAG, "onComplete Completable example: Note updated successfully!")
+            }
+        }
+    }
+
+
 
     private fun getNotesObservable(): Observable<Note> {
         val notes = prepareNotes()
@@ -183,6 +232,22 @@ class ObserverActivity : AppCompatActivity() {
                 emitter.onSuccess(note)
             }
         }
+    }
+
+    /**
+     * Completable example
+     * Assume this making PUT request to server to update the Note
+     */
+    private fun updateNote(note: Note): Completable {
+        return Completable.create(object : CompletableOnSubscribe {
+            @Throws(Exception::class)
+            override fun subscribe(emitter: CompletableEmitter) {
+                if (!emitter.isDisposed) {
+                    Thread.sleep(1000)
+                    emitter.onComplete()
+                }
+            }
+        })
     }
 
     private fun prepareNotes(): List<Note> {
