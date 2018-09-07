@@ -3,4 +3,6 @@
     <string name="first_rxjava_example">First RxJava example: results in Log.d</string>
     <string name="go_to_buffer">Go to buffer example</string>
     <string name="tap_repeatedly_here">Tap repeatedly here!</string>
+    <string name="go_to_observers_example">Go to Observers example</string>
+    <string name="observable_examples">Observable examples, results in Log.d</string>
 </resources>

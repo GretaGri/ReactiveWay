@@ -13,6 +13,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Predicate
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -61,9 +62,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val buttonGoToBufferExample = findViewById(R.id.button_buffer) as Button
-        buttonGoToBufferExample.setOnClickListener{
+
+        button_buffer.setOnClickListener{
            val i = Intent(this, BufferActivity::class.java)
+            startActivity(i)
+        }
+
+        button_observer_example.setOnClickListener{
+            val i = Intent(this, ObserverActivity::class.java)
             startActivity(i)
         }
 

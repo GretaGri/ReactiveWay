@@ -23,4 +23,14 @@
         android:textColor="@color/colorAccent"
         android:gravity="center"
         android:text="@string/go_to_buffer"/>
+
+    <Button
+        android:id="@+id/button_observer_example"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textSize="@dimen/text_size_heading"
+        android:textColor="@color/colorAccent"
+        android:gravity="center"
+        android:text="@string/go_to_observers_example"/>
 </LinearLayout>

@@ -28,7 +28,8 @@
                     android:scheme="com.enpassio.reactiveway" />
             </intent-filter>
         </activity>
-        <activity android:name=".BufferActivity"></activity>
+        <activity android:name=".BufferActivity" />
+        <activity android:name=".ObserverActivity"></activity>
     </application>
 
 </manifest>

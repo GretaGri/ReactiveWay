@@ -32,6 +32,8 @@ class BufferActivity : AppCompatActivity() {
         // to get rid of findViewById learning source:
         // https://antonioleiva.com/kotlin-android-extensions/
 
+        // Source to understand RxBinding:
+        // https://code.tutsplus.com/tutorials/rxjava-for-android-apps-introducing-rxbinding-and-rxlifecycle--cms-28565
         RxView.clicks(layout_tap_area)
                 .map { it: Any -> 1 }
                 .buffer(3, TimeUnit.SECONDS)
