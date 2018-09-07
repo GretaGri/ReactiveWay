@@ -1,6 +1,7 @@
 package com.enpassio.reactiveway
 
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.*
@@ -8,20 +9,9 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import java.util.*
-import io.reactivex.CompletableObserver
-import android.provider.ContactsContract.CommonDataKinds.Note
-import android.support.v4.app.FragmentActivity
-import io.reactivex.internal.disposables.DisposableHelper.isDisposed
-import io.reactivex.CompletableEmitter
-import io.reactivex.internal.util.NotificationLite.disposable
-
-
-
-
-
-
 
 
 class ObserverActivity : AppCompatActivity() {
@@ -114,6 +104,35 @@ class ObserverActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(completableObserver)
+
+        /**
+         * Flowable and SingleObserver
+         * -
+         * Simple example of Flowable just to show the syntax
+         * the use of Flowable is best explained when used with BackPressure
+         * Read the below link to know the best use cases to use Flowable operator
+         * https://github.com/ReactiveX/RxJava/wiki/What%27s-different-in-2.0#when-to-use-flowable
+         *
+         * Flowable can be used when the source is generating 10k+ events and subscriber
+         * can’t consume it all.
+         * 
+         * In the below example, Flowable is emitting numbers from 1-100 and reduce operator is used
+         * to add all the numbers and emit the final value.
+         */
+        val flowableObservable = getFlowableObservable()
+
+        val flowableObserver = getFlowableObserver()
+
+        flowableObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .reduce(0, object : BiFunction<Int, Int, Int> {
+                    override fun apply(result: Int, number: Int): Int {
+                        //Log.e(TAG, "Result: " + result + ", new number: " + number);
+                        return result + number
+                    }
+                })
+                .subscribe(flowableObserver)
     }
 
     private fun getNotesObserver(): Observer<Note> {
@@ -195,6 +214,22 @@ class ObserverActivity : AppCompatActivity() {
         }
     }
 
+    private fun getFlowableObserver(): SingleObserver<Int> {
+        return object : SingleObserver<Int> {
+            override fun onSubscribe(d: Disposable) {
+                Log.d(TAG, "onSubscribe")
+                disposable = d
+            }
+
+            override fun onSuccess(integer: Int) {
+                Log.d(TAG, "onSuccess Flowable example: " + integer)
+            }
+
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
+        }
+    }
 
 
     private fun getNotesObservable(): Observable<Note> {
@@ -248,6 +283,13 @@ class ObserverActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    /**
+     * Flowable observable example
+     */
+    private fun getFlowableObservable(): Flowable<Int> {
+        return Flowable.range(1, 100)
     }
 
     private fun prepareNotes(): List<Note> {
