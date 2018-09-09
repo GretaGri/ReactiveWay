@@ -78,6 +78,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        button_concat_merge.setOnClickListener{
+            val i = Intent(this, ConcatMergeActivity::class.java)
+            startActivity(i)
+        }
+
 
         // add to Composite observable
         // .map() operator is used to turn the note into all uppercase letters

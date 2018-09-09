@@ -30,7 +30,8 @@
         </activity>
         <activity android:name=".BufferDebounceActivity" />
         <activity android:name=".ObserverActivity" />
-        <activity android:name=".MapActivity"></activity>
+        <activity android:name=".MapActivity" />
+        <activity android:name=".ConcatMergeActivity"></activity>
     </application>
 
 </manifest>

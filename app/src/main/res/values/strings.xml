@@ -9,4 +9,6 @@
     <string name="search_query_info">Search query will be accumulated every 300 milli sec</string>
     <string name="go_to_map">Go to map examples</string>
     <string name="map_examples">Map, switchMap, flatMap and conctatMap examples, results in Log.d</string>
+    <string name="concat_merge_examples">Concat() and merge() operators examples, results in Log.d</string>
+    <string name="go_to_concat_merge">Go to concat and merge examples</string>
 </resources>
