@@ -11,6 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MapActivity : AppCompatActivity() {
@@ -152,12 +153,12 @@ class MapActivity : AppCompatActivity() {
                 }
                 .subscribe(object : Observer<User> {
                     override fun onSubscribe(d: Disposable) {
-                        Log.e(TAG, "onSubscribe")
+                        Log.d(TAG, "onSubscribe")
                         disposable = d
                     }
 
                     override fun onNext(user: User) {
-                        Log.e(TAG, "onNext concatMap() example: " + user.name + ", " + user.gender + ", " + user.address)
+                        Log.d(TAG, "onNext concatMap() example: " + user.name + ", " + user.gender + ", " + user.address)
                     }
 
                     override fun onError(e: Throwable) {
@@ -165,7 +166,33 @@ class MapActivity : AppCompatActivity() {
                     }
 
                     override fun onComplete() {
-                        Log.e(TAG, "All users emitted!")
+                        Log.d(TAG, "All users emitted!")
+                    }
+                })
+        //switchMap example:
+
+        val integerObservable = Observable.fromArray(1, 2, 3, 4, 5, 6)
+
+        // it always emits 6 as it un-subscribes the before observer
+        integerObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .switchMap { int -> Observable.just(int).delay(1, TimeUnit.SECONDS) }.subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe")
+                        disposable = d
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext switchMap() example: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "All users emitted!")
                     }
                 })
     }
