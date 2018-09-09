@@ -1,29 +1,16 @@
 package com.enpassio.reactiveway
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
-import io.reactivex.internal.util.NotificationLite.disposable
-import javax.xml.datatype.DatatypeConstants.SECONDS
-import android.R.attr.delay
-import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import io.reactivex.ObservableSource
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
-import io.reactivex.internal.disposables.DisposableHelper.isDisposed
-import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
-import com.enpassio.reactiveway.MapActivity.User
-import io.reactivex.internal.util.NotificationLite.disposable
-
-
-
-
+import java.util.*
 
 
 class MapActivity : AppCompatActivity() {
@@ -83,7 +70,7 @@ companion object {
                     }
 
                     override fun onNext(user: User) {
-                        Log.d(TAG, "onNext: " + user.name + ", "+ user.gender + ", "+ user.email + ", " + user.address)
+                        Log.d(TAG, "onNext map() example: " + user.name + ", "+ user.gender + ", "+ user.email + ", " + user.address)
                     }
 
                     override fun onError(e: Throwable) {
@@ -95,8 +82,78 @@ companion object {
                     }
                 })
 
+        /** FlatMap () example
+         *  A scenario where you have a network call to fetch Users with name and gender. Then you
+         *  have another network that gives you address of each user. Now the requirement is to
+         *  create an Observable that emits Users with name, gender and address properties.
+         *  To achieve this, you need to get the users first, then make separate network call
+         *  for each user to fetch his address.
+         *
+         *  getUsersObservable() : assume it makes a network call and returns an Observable that
+         *  emits User (name and gender) objects.
+         *
+         *  getAddressObservable() : assume it makes another network call just to fetch user
+         *  address. This also returns an Observable that emits User by adding address node to
+         *  existing name and gender.
+         *
+         *  flatMap() operator makes getAddressObservable() call each time a User is emitted and
+         *  returns an Observable that emits User including the address filed.
+         *
+         *  Finally flatMap() returns an Observable by merging two Observables together.
+         *
+         *  Thread.sleep(sleepTime); added here to simulate network latency.
+         */
+        getUsersObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(Function <User, Observable<User>> { user ->
+                    // getting each user address by making another network call
+                    getAddressObservable(user)
+                })
+                .subscribe(object : Observer<User> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe")
+                        disposable = d
+                    }
+
+                    override fun onNext(user: User) {
+                        Log.d(TAG, "onNext flatMap() example: " + user.name + ", " + user.gender + ", " + user.address)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "All users emitted!")
+                    }
+                })
     }
 
+    /**
+     * Assume this as a network call
+     * returns Users with address filed added
+     */
+    private fun getAddressObservable(user: User): Observable<User> {
+
+        val addresses = arrayOf("1600 Amphitheatre Parkway, Mountain View, CA 94043", "2300 Traverwood Dr. Ann Arbor, MI 48105", "500 W 2nd St Suite 2900 Austin, TX 78701", "355 Main Street Cambridge, MA 02142")
+
+        return Observable
+                .create(ObservableOnSubscribe<User> { emitter ->
+                    val address = addresses[Random().nextInt(2) + 0]
+                    if (!emitter.isDisposed) {
+                        user.address = address
+
+
+                        // Generate network latency of random duration
+                        val sleepTime = Random().nextInt(1000) + 500
+
+                        Thread.sleep(sleepTime.toLong())
+                        emitter.onNext(user)
+                        emitter.onComplete()
+                    }
+                }).subscribeOn(Schedulers.io())
+    }
 
     // assume this method is making a network call and fetching user objects.
     // This returns an Observable that emits User objects with name and gender,
