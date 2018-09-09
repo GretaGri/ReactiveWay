@@ -169,7 +169,11 @@ class MapActivity : AppCompatActivity() {
                         Log.d(TAG, "All users emitted!")
                     }
                 })
-        //switchMap example:
+
+        //4. SwitchMap() example:
+        //---
+        //SwitchMap always return the latest Observable and emits the items from it.
+        //Example: https://www.androidhive.info/RxJava/android-rxjava-instant-search-local-remote-databases/
 
         val integerObservable = Observable.fromArray(1, 2, 3, 4, 5, 6)
 

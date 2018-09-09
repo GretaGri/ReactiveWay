@@ -26,6 +26,6 @@ _____________________________________________________________
 4. https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/ (done)
 5. https://www.androidhive.info/RxJava/rxjava-understanding-observables/ (done)
 6. https://www.androidhive.info/RxJava/map-flatmap-switchmap-concatmap/ (done)
-7. https://www.androidhive.info/RxJava/rxjava-operators-concat-merge/
+7. https://www.androidhive.info/RxJava/rxjava-operators-concat-merge/ (done)
 
 
