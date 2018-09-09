@@ -29,7 +29,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".BufferDebounceActivity" />
-        <activity android:name=".ObserverActivity"></activity>
+        <activity android:name=".ObserverActivity" />
+        <activity android:name=".MapActivity"></activity>
     </application>
 
 </manifest>

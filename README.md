@@ -25,5 +25,6 @@ _____________________________________________________________
 3. https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/ (done)
 4. https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/ (done)
 5. https://www.androidhive.info/RxJava/rxjava-understanding-observables/ (done)
+6. https://www.androidhive.info/RxJava/map-flatmap-switchmap-concatmap/
 
 
