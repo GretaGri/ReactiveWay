@@ -42,16 +42,21 @@ class MapActivity : AppCompatActivity() {
      *
      */
 
-companion object {
+    companion object {
         val TAG = MapActivity::class.java.simpleName
-}
+    }
+
     private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-      //1. Map operator transform each item emitted by an Observable and emits the modified item.
+        /** 1. Map() example
+         * ---
+         * Map operator transforms each item emitted by an Observable and emits the modified item.
+         */
+
         getUsersObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -70,7 +75,7 @@ companion object {
                     }
 
                     override fun onNext(user: User) {
-                        Log.d(TAG, "onNext map() example: " + user.name + ", "+ user.gender + ", "+ user.email + ", " + user.address)
+                        Log.d(TAG, "onNext map() example: " + user.name + ", " + user.gender + ", " + user.email + ", " + user.address)
                     }
 
                     override fun onError(e: Throwable) {
@@ -82,7 +87,9 @@ companion object {
                     }
                 })
 
-        /** FlatMap () example
+        /**
+         *  2. FlatMap () example
+         * ---
          *  A scenario where you have a network call to fetch Users with name and gender. Then you
          *  have another network that gives you address of each user. Now the requirement is to
          *  create an Observable that emits Users with name, gender and address properties.
@@ -106,7 +113,7 @@ companion object {
         getUsersObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(Function <User, Observable<User>> { user ->
+                .flatMap(Function<User, Observable<User>> { user ->
                     // getting each user address by making another network call
                     getAddressObservable(user)
                 })
@@ -126,6 +133,39 @@ companion object {
 
                     override fun onComplete() {
                         Log.d(TAG, "All users emitted!")
+                    }
+                })
+
+        /**
+         * 3. ConcatMap() example
+         * ---
+         * ConcatMap() maintains the order of items and waits for the current Observable to complete its job before emitting the next one.
+         * ConcatMap is more suitable when you want to maintain the order of execution.
+         */
+
+        getUsersObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .concatMap { user ->
+                    // getting each user address by making another network call
+                    getAddressObservable(user)
+                }
+                .subscribe(object : Observer<User> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.e(TAG, "onSubscribe")
+                        disposable = d
+                    }
+
+                    override fun onNext(user: User) {
+                        Log.e(TAG, "onNext concatMap() example: " + user.name + ", " + user.gender + ", " + user.address)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.e(TAG, "All users emitted!")
                     }
                 })
     }
@@ -183,7 +223,7 @@ companion object {
                 }).subscribeOn(Schedulers.io())
     }
 
-    internal data class User (var name: String? = null,
+    internal data class User(var name: String? = null,
                              var email: String? = null,
                              var gender: String? = null,
                              var address: String? = null)
