@@ -5,8 +5,15 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import hu.akarnokd.rxjava2.math.MathObservable
 import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
+import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Predicate
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.internal.util.NotificationLite.disposable
+import io.reactivex.MaybeObserver
+import io.reactivex.functions.BiFunction
 
 
 class MathematicalOperatorsActivity : AppCompatActivity() {
@@ -143,11 +150,11 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.averageDouble(observable)
                 .subscribe(object : Observer<Double> {
                     override fun onSubscribe(d: Disposable) {
-                        Log.d(TAG, "onSubscribe for sumInt() (for integer) operator example")
+                        Log.d(TAG, "onSubscribe for average() operator example")
                     }
 
                     override fun onNext(double: Double) {
-                        Log.d(TAG, "Sum value: " + double.toInt())
+                        Log.d(TAG, "Average value: " + double.toInt())
                     }
 
                     override fun onError(e: Throwable) {
@@ -155,8 +162,83 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
 
                     override fun onComplete() {
-                        Log.d(TAG, "onComplete sumInt() integer example")
+                        Log.d(TAG, "onComplete average() from integer example")
                     }
                 })
+
+        /**
+         * Count() operator
+         * ---
+         * Counts number of items emitted by an Observable and emits only the count value.
+         *
+         * Below, we have an Observable that emits both Male and Female users. We can count number of Male
+         * users using count() operator as shown.
+         *
+         * filter() filters the items by gender by applying
+         * user.getGender().equalsIgnoreCase(“male”) on each emitted item.
+         * */
+
+        getUsersObservable()
+                .filter(object : Predicate<User> {
+                    @Throws(Exception::class)
+                   override fun test(user: User): Boolean {
+                        // for equalsIgnoreCase in Kotlin:
+                        //https://stackoverflow.com/questions/50198067/kotlin-equivalent-of-javas-equalsignorecase
+                        return user.gender.equals("male",ignoreCase = true)
+                    }
+                })
+                .count()
+                .subscribeWith(object : SingleObserver<Long> {
+                    override fun onSubscribe(d: Disposable) {
+
+                    }
+
+                    override fun onSuccess(count: Long) {
+                        Log.d(TAG, "Male users count: " + count)
+                    }
+
+                    override fun onError(e: Throwable) {
+
+                    }
+                })
+
+
     }
+
+    private fun getUsersObservable(): Observable<User> {
+        val maleUsers = arrayOf("Mark", "John", "Trump", "Obama")
+        val femaleUsers = arrayOf("Lucy", "Scarlett", "April")
+
+        val users = ArrayList<User>()
+
+        for (name in maleUsers) {
+            val user = User()
+            user.name = name
+            user.gender = "male"
+
+            users.add(user)
+        }
+
+        for (name in femaleUsers) {
+            val user = User()
+            user.name = name
+            user.gender = "female"
+
+            users.add(user)
+        }
+        return Observable
+                .create(ObservableOnSubscribe<User> { emitter ->
+                    for (user in users) {
+                        if (!emitter.isDisposed) {
+                            emitter.onNext(user)
+                        }
+                    }
+
+                    if (!emitter.isDisposed) {
+                        emitter.onComplete()
+                    }
+                }).subscribeOn(Schedulers.io())
+    }
+    internal data class User(var name: String? = null,
+                             var gender: String? = null)
 }
