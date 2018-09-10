@@ -77,6 +77,31 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
                 })
 
+        /**
+         * Min() operator
+         * ---
+         *  min() emits the minimum valued item in the Observable data set.
+         */
+
+        MathObservable.min(observable)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for min() operator example")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "Min value: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "onComplete min() integer example")
+                    }
+                })
+
 
     }
 
