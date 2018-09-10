@@ -1,7 +1,6 @@
 package com.enpassio.reactiveway
 
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.*
@@ -172,7 +171,7 @@ class ObserverActivity : AppCompatActivity() {
             }
 
             override fun onError(e: Throwable) {
-                Log.d(TAG, "onError: " + e.message)
+                Log.e(TAG, "onError: " + e.message)
             }
         }
     }

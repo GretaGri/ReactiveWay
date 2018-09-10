@@ -11,4 +11,6 @@
     <string name="map_examples">Map, switchMap, flatMap and conctatMap examples, results in Log.d</string>
     <string name="concat_merge_examples">Concat() and merge() operators examples, results in Log.d</string>
     <string name="go_to_concat_merge">Go to concat and merge examples</string>
+    <string name="go_to_mathematical_operators">Go to mathematical operators examples</string>
+    <string name="mathematical_operators_examples">Mathematical operators: Max, Min, Sum, Average, Count and Reduce examples: results in Log.d</string>
 </resources>

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Button
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -83,8 +82,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        button_mathematical_op_example.setOnClickListener {
+            val i = Intent(this, MathematicalOperatorsActivity::class.java)
+            startActivity(i)
+        }
 
-        // add to Composite observable
+
+
+            // add to Composite observable
         // .map() operator is used to turn the note into all uppercase letters
         compositeDisposable.add(getNotesObservable()
                 .subscribeOn(Schedulers.io())
@@ -147,6 +152,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
                     }
 
                     override fun onComplete() {
