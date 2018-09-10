@@ -50,9 +50,35 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
 
                     override fun onComplete() {
-                        Log.d(TAG, "onComplete max() example")
+                        Log.d(TAG, "onComplete max() integer example")
                     }
                 })
 
+        //The below example emits the max value of an float series.
+
+        val floatObservable = Observable.just(10.5f, 14.5f, 11.5f, 5.6f)
+
+        MathObservable.max(floatObservable)
+                .subscribe(object : Observer<Float> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for max() operator example")
+                    }
+
+                    override fun onNext(aFloat: Float) {
+                        Log.d(TAG, "Max of 10.5f, 11.5f, 14.5f: " + aFloat)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "onComplete max() float example")
+                    }
+                })
+
+
     }
+
+
 }
