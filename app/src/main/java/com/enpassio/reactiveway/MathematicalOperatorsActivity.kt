@@ -4,16 +4,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import hu.akarnokd.rxjava2.math.MathObservable
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.Observer
-import io.reactivex.SingleObserver
+import io.reactivex.*
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.internal.util.NotificationLite.disposable
-import io.reactivex.MaybeObserver
-import io.reactivex.functions.BiFunction
 
 
 class MathematicalOperatorsActivity : AppCompatActivity() {
@@ -26,6 +21,8 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
     companion object {
         private val TAG = MathematicalOperatorsActivity::class.java.simpleName
     }
+
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +42,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.max(observable)
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {
+                        disposable = d
                         Log.d(TAG, "onSubscribe for max() operator example")
                     }
 
@@ -68,6 +66,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.max(floatObservable)
                 .subscribe(object : Observer<Float> {
                     override fun onSubscribe(d: Disposable) {
+                        disposable = d
                         Log.d(TAG, "onSubscribe for max() operator example")
                     }
 
@@ -93,6 +92,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.min(observable)
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {
+                        disposable = d
                         Log.d(TAG, "onSubscribe for min() operator example")
                     }
 
@@ -122,6 +122,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.sumInt(observable)
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {
+                        disposable = d
                         Log.d(TAG, "onSubscribe for sumInt() (for integer) operator example")
                     }
 
@@ -150,6 +151,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         MathObservable.averageDouble(observable)
                 .subscribe(object : Observer<Double> {
                     override fun onSubscribe(d: Disposable) {
+                        disposable = d
                         Log.d(TAG, "onSubscribe for average() operator example")
                     }
 
@@ -181,16 +183,17 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
         getUsersObservable()
                 .filter(object : Predicate<User> {
                     @Throws(Exception::class)
-                   override fun test(user: User): Boolean {
+                    override fun test(user: User): Boolean {
                         // for equalsIgnoreCase in Kotlin:
                         //https://stackoverflow.com/questions/50198067/kotlin-equivalent-of-javas-equalsignorecase
-                        return user.gender.equals("male",ignoreCase = true)
+                        return user.gender.equals("male", ignoreCase = true)
                     }
                 })
                 .count()
                 .subscribeWith(object : SingleObserver<Long> {
                     override fun onSubscribe(d: Disposable) {
-
+                        disposable = d
+                        Log.d(TAG, "onSubscribe for count() operator example")
                     }
 
                     override fun onSuccess(count: Long) {
@@ -198,11 +201,48 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
-
+                        Log.e(TAG, "onError: " + e.message)
                     }
                 })
 
+        /**
+         * Reduce() operator
+         * ---
+         * Reduce applies a function on each item and emits the final result. First, it applies a
+         * function to first item, takes the result and feeds back to same function on second item.
+         * This process continuous until the last emission. Once all the items are over, it emits
+         * the final result.
+         *
+         * Below we have an Observable that emits numbers from 1 to 10. The reduce() operator
+         * calculates the sum of all the numbers and emits the final result.
+         */
 
+        Observable
+                .range(1, 10)
+                .reduce(object : BiFunction<Int, Int, Int> {
+                    @Throws(Exception::class)
+                    override fun apply(number: Int, sum: Int): Int {
+                        return sum + number
+                    }
+                })
+                .subscribe(object : MaybeObserver<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        disposable = d
+                        Log.d(TAG, "onSubscribe for reduce() operator example")
+                    }
+
+                    override fun onSuccess(integer: Int) {
+                        Log.d(TAG, "Sum of numbers from 1 - 10 is: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "onComplete reduce() example")
+                    }
+                })
     }
 
     private fun getUsersObservable(): Observable<User> {
@@ -239,6 +279,12 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
                 }).subscribeOn(Schedulers.io())
     }
+
     internal data class User(var name: String? = null,
                              var gender: String? = null)
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable!!.dispose()
+    }
 }
