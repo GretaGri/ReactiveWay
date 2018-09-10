@@ -31,7 +31,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
          *
          * The below example emits the max value of an integer series.
          */
-        val numbers = arrayOf(5, 101, 404, 22, 3, 1024, 65)
+        val numbers: Array<Int> = arrayOf(5, 101, 404, 22, 3, 1024, 65)
 
         val observable = Observable.fromArray(*numbers)
 
@@ -102,8 +102,61 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                     }
                 })
 
+        /**
+         * Sum() operator
+         * ---
+         *  sum() calculates the sum of all the items emitted by an Observable and emits only the
+         *  Sum value.
+         *
+         *  In the below example, sumInt() is used to calculate the sum of Integers. Likewise,
+         *  we have sumFloat(), sumDouble() and sumLong() available to calculate sum of other
+         *  primitive datatypes.
+         */
+        MathObservable.sumInt(observable)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for sumInt() (for integer) operator example")
+                    }
 
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "Sum value: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "onComplete sumInt() integer example")
+                    }
+                })
+
+        /**
+         * Average() operator
+         * ---
+         *  averageDouble() calculates the sum of all the items emitted by an Observable and emits only
+         *  the Average value.
+         *
+         *  The below example calculates the average value of double using averageDouble() method.
+         *  To calculate average of float averageFloat() is available.
+         */
+        MathObservable.averageDouble(observable)
+                .subscribe(object : Observer<Double> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "onSubscribe for sumInt() (for integer) operator example")
+                    }
+
+                    override fun onNext(double: Double) {
+                        Log.d(TAG, "Sum value: " + double.toInt())
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "onComplete sumInt() integer example")
+                    }
+                })
     }
-
-
 }
