@@ -337,6 +337,36 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "Completed example of skip() operator")
                     }
                 })
+
+        /**
+         * SkipLast() operator
+         * ---
+         * skipLast(n) skips the last N emissions from an Observable.
+         *
+         * In the same example, skipLast(4) skips the emission of 7-10 and emits
+         * only 1, 2, 3, 4, 5, 6
+         */
+
+        Observable
+                .range(1, 10)
+                .skipLast(4)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed for skipLast() operator example")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext example of skipLast() operator: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed example of skipLast() operator")
+                    }
+                })
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
