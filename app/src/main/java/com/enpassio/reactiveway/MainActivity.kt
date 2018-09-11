@@ -425,6 +425,48 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "Completed example of takeLast() operator")
                     }
                 })
+
+        /**
+         *  Distinct() operator
+         *  ---
+         *  Distinct operator filters out items emitted by an Observable by avoiding duplicate
+         *  items in the list.
+         *
+         *  Below, we have list of integers with duplicates.
+         *  Using distinct(), emission of duplicates can be avoided.
+         */
+        val numbersObservable = Observable.just(10, 10, 15, 20, 100, 200, 100, 300, 20, 100)
+
+        numbersObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .distinct()
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed for distinct() operator example")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext distinct() operator example: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed example of distinct() operator")
+                    }
+                })
+
+        val notesObservable = getNotesObservable()
+
+        val notesObserver = getNotesObserverforDistinct()
+
+        notesObservable.observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .distinct()
+                .subscribeWith(notesObserver)
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
@@ -484,6 +526,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getNotesObserverforDistinct(): DisposableObserver<Note> {
+        return object : DisposableObserver<Note>() {
+            //onNext(): This method will be called when Observable starts emitting the data.
+            override fun onNext(note: Note) {
+                Log.d(TAG, "Note with distinct: " + note.note)
+            }
+
+            //onError(): In case of any error, onError() method will be called.
+            override fun onError(e: Throwable) {
+                Log.e(TAG, "onError: " + e.message)
+            }
+
+            //onComplete(): When an Observable completes the emission of all the items,
+            // onCompleted() will be called.
+            override fun onComplete() {
+                Log.d(TAG, "All notes in distict() example are emitted!")
+            }
+        }
+    }
+
     private fun getNotesObservable(): Observable<Note> {
         val notes = prepareNotes()
 
@@ -504,6 +566,8 @@ class MainActivity : AppCompatActivity() {
         val notes = mutableListOf<Note>()
         notes.add(Note(1, "buy tooth paste!"))
         notes.add(Note(2, "call brother!"))
+        notes.add(Note(3, "watch narcos tonight!"))
+        notes.add(Note(4, "pay power bill!"))
         notes.add(Note(3, "watch narcos tonight!"))
         notes.add(Note(4, "pay power bill!"))
 
