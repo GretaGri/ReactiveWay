@@ -308,6 +308,35 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
+
+        /**
+         * Skip() operator
+         * ---
+         * Skip(n) skips the emission of first N items emitted by an Observable.
+         *
+         * Let’s say you have an Observable that emits integers from 1-10 and if skip(4) is operator
+         * is used, it skips 1-4 and emits the numbers 5, 6, 7, 8, 9, 10.
+         */
+        Observable
+                .range(1, 10)
+                .skip(4)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed for example of skip() operator")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext example of skip() operator: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed example of skip() operator")
+                    }
+                })
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
