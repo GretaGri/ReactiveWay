@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import hu.akarnokd.rxjava2.math.MathObservable
 import io.reactivex.*
+import io.reactivex.Observable.fromArray
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
+import java.util.Comparator.comparing
 
 
 class MathematicalOperatorsActivity : AppCompatActivity() {
@@ -243,7 +245,51 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
                         Log.d(TAG, "onComplete reduce() example")
                     }
                 })
+
+        /** Mathematical operators used on custom data types example
+         *
+         *
+         */
+        val persons = ArrayList<Person>()
+        persons.addAll(getPersons())
+
+        val personObservable = rx.Observable.from(persons)
+
+        //https://stackoverflow.com/questions/47249096/how-to-target-jvm-9-on-kotlin-with-gradle
+        rx.observables.MathObservable.from(personObservable)
+                .max(compareBy(Person::age))
+                .subscribe(object : rx.Observer<Person> {
+                        override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onNext(person: Person) {
+                        Log.d(TAG, "Person with max age: " + person.name + ", " + person.age + " yrs")
+                    }
+
+                    override fun onCompleted() {
+                        Log.d(TAG, "onComplete max() with custom data example")
+                    }
+                })
     }
+
+    private fun getPersons(): List<Person> {
+        val persons = ArrayList<Person>()
+
+        val p1 = Person("Lucy", 24)
+        persons.add(p1)
+
+        val p2 = Person("John", 45)
+        persons.add(p2)
+
+        val p3 = Person("Obama", 51)
+        persons.add(p3)
+
+        return persons
+    }
+
+    internal data class Person(var name: String? = null,
+                               var age: Int? = null)
 
     private fun getUsersObservable(): Observable<User> {
         val maleUsers = arrayOf("Mark", "John", "Trump", "Obama")
