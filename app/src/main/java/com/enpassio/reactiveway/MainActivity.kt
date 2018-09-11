@@ -396,6 +396,35 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "Completed example of take() operator")
                     }
                 })
+
+        /**
+         *  TakeLast() operator
+         *  ---         *
+         *  takeLast(n) emits last N items from an Observable.
+         *
+         *  In the same example, takeLast(4) takes last 4 emissions
+         *  i.e 7, 8, 9, 10 and skips the remaining.
+         */
+        Observable
+                .range(1, 10)
+                .takeLast(4)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed for takeLast() operator example")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext example of takeLast() operator: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed example of takeLast() operator")
+                    }
+                })
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
