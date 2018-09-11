@@ -367,6 +367,35 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "Completed example of skipLast() operator")
                     }
                 })
+
+        /**
+         * Take() operator
+         * ---
+         * take(n) acts exactly opposite to skip. It takes first N emissions of an Observable.
+         *
+         * In the below example, take(4) takes first 4 emissions i.e 1, 2, 3, 4 and skips
+         * the remaining.
+         */
+        Observable
+                .range(1, 10)
+                .take(4)
+                .subscribe(object : Observer<Int> {
+                    override fun onSubscribe(d: Disposable) {
+                        Log.d(TAG, "Subscribed for take() operator example")
+                    }
+
+                    override fun onNext(integer: Int) {
+                        Log.d(TAG, "onNext example of take() operator: " + integer)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+                    }
+
+                    override fun onComplete() {
+                        Log.d(TAG, "Completed example of take() operator")
+                    }
+                })
     }
 
     private fun getIntObserver(): DisposableObserver<Int> {
