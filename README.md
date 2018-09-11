@@ -18,6 +18,9 @@ _____________________________________________________________
 - https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
 - No more findViewById: https://antonioleiva.com/kotlin-android-extensions/
 - To help understand RxBinding: https://code.tutsplus.com/tutorials/rxjava-for-android-apps-introducing-rxbinding-and-rxlifecycle--cms-28565
+- Kotlin Comparators: https://realjenius.com/2017/08/23/kotlin-libs-2/
+- Max() operator imports for reactivex.io: https://github.com/ReactiveX/RxJava/wiki/Mathematical-and-Aggregate-Operators,
+ https://search.maven.org/artifact/com.github.akarnokd/rxjava2-extensions/0.20.3/jar
 
 - For diving deeper in RxJava following those tutorials: https://www.androidhive.info/RxJava/tutorials/
 1. https://www.androidhive.info/RxJava/android-getting-started-with-reactive-programming/#example3 (done)
@@ -27,5 +30,8 @@ _____________________________________________________________
 5. https://www.androidhive.info/RxJava/rxjava-understanding-observables/ (done)
 6. https://www.androidhive.info/RxJava/map-flatmap-switchmap-concatmap/ (done)
 7. https://www.androidhive.info/RxJava/rxjava-operators-concat-merge/ (done)
+8. https://www.androidhive.info/RxJava/mathematical-operators-rxjava/ (done)
+9. https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/ (done)
+10. https://www.androidhive.info/RxJava/android-rxjava-networking-with-retrofit-gson-notes-app/ (TODO)
 
 
