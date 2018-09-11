@@ -5,12 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import hu.akarnokd.rxjava2.math.MathObservable
 import io.reactivex.*
-import io.reactivex.Observable.fromArray
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Predicate
 import io.reactivex.schedulers.Schedulers
-import java.util.Comparator.comparing
 
 
 class MathematicalOperatorsActivity : AppCompatActivity() {
@@ -255,7 +253,7 @@ class MathematicalOperatorsActivity : AppCompatActivity() {
 
         val personObservable = rx.Observable.from(persons)
 
-        //https://stackoverflow.com/questions/47249096/how-to-target-jvm-9-on-kotlin-with-gradle
+        //About Comparables and Comparators in Kotlin: https://realjenius.com/2017/08/23/kotlin-libs-2/
         rx.observables.MathObservable.from(personObservable)
                 .max(compareBy(Person::age))
                 .subscribe(object : rx.Observer<Person> {
