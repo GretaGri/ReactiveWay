@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -49,6 +50,24 @@ class MainActivity : AppCompatActivity() {
      *
      * https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/#buffer
      * Example of buffer() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#filter
+     * Example of filter() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#skip
+     * Example of skip() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#skip-last
+     * Example of skipLast() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#take
+     * Example of take() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#take-last
+     * Example of takeLast() operator
+     *
+     * https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/#distinct
+     * Example of distinct() operator
      */
 
     companion object {
@@ -62,22 +81,22 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        button_buffer.setOnClickListener{
-           val i = Intent(this, BufferDebounceActivity::class.java)
+        button_buffer.setOnClickListener {
+            val i = Intent(this, BufferDebounceActivity::class.java)
             startActivity(i)
         }
 
-        button_observer_example.setOnClickListener{
+        button_observer_example.setOnClickListener {
             val i = Intent(this, ObserverActivity::class.java)
             startActivity(i)
         }
 
-        button_map_example.setOnClickListener{
+        button_map_example.setOnClickListener {
             val i = Intent(this, MapActivity::class.java)
             startActivity(i)
         }
 
-        button_concat_merge.setOnClickListener{
+        button_concat_merge.setOnClickListener {
             val i = Intent(this, ConcatMergeActivity::class.java)
             startActivity(i)
         }
@@ -88,8 +107,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-            // add to Composite observable
+        // add to Composite observable
         // .map() operator is used to turn the note into all uppercase letters
         compositeDisposable.add(getNotesObservable()
                 .subscribeOn(Schedulers.io())
@@ -176,6 +194,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
                     }
 
                     override fun onComplete() {
@@ -195,6 +214,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
                     }
 
                     override fun onComplete() {
@@ -213,14 +233,15 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onNext(integer: Int) {
-                        Log.d(TAG, "onNext: " + integer)
+                        Log.d(TAG, "onNext repeat operator example: " + integer)
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
                     }
 
                     override fun onComplete() {
-                        Log.d(TAG, "Completed")
+                        Log.d(TAG, "Completed repeat operator example")
                     }
                 })
 
@@ -247,10 +268,44 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
                     }
 
                     override fun onComplete() {
                         Log.d(TAG, "All items emitted!")
+                    }
+                })
+        /**
+         * Source: https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil
+         * Filter() operator example
+         * ---
+         * filter() example with a custom datatype. Below Observable emits list of Users and we want
+         * to filter out the users by gender female.
+         *
+         * getUsersObservable() creates an Observable that emits list of users combining both male
+         * and female users.
+         *
+         * In the filter() method, each user is checked against female gender by
+         * user.gender.equals(“female”, ignoreCase = true) condition.
+         */
+        val userObservable = getUsersObservable()
+
+        userObservable
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(Predicate<User> { user -> user.gender.equals("female", ignoreCase = true) })
+                .subscribeWith(object : DisposableObserver<User>() {
+                    override fun onNext(user: User) {
+                        Log.e(TAG, user.name + ", " + user.gender)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.e(TAG, "onError: " + e.message)
+
+                    }
+
+                    override fun onComplete() {
+
                     }
                 })
     }
@@ -339,6 +394,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     internal data class Note(var id: Int, var note: String)
+
+    private fun getUsersObservable(): Observable<User> {
+        val maleUsers = arrayOf("Mark", "John", "Trump", "Obama")
+        val femaleUsers = arrayOf("Lucy", "Scarlett", "April")
+
+        val users = ArrayList<User>()
+
+        for (name in maleUsers) {
+            val user = User()
+            user.name = name
+            user.gender = "male"
+
+            users.add(user)
+        }
+
+        for (name in femaleUsers) {
+            val user = User()
+            user.name = name
+            user.gender = "female"
+
+            users.add(user)
+        }
+        return Observable
+                .create(ObservableOnSubscribe<User> { emitter ->
+                    for (user in users) {
+                        if (!emitter.isDisposed) {
+                            emitter.onNext(user)
+                        }
+                    }
+
+                    if (!emitter.isDisposed) {
+                        emitter.onComplete()
+                    }
+                }).subscribeOn(Schedulers.io())
+    }
+
+    internal data class User(var name: String? = null,
+                             var gender: String? = null)
+
 
     override fun onDestroy() {
         super.onDestroy()
