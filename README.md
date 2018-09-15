@@ -8,3 +8,4 @@ Source: https://www.androidhive.info/RxJava/android-rxjava-networking-with-retro
 
 **Resources**
 ____________________________________________________________
+Kotlin Android Extensions: https://antonioleiva.com/kotlin-android-extensions/

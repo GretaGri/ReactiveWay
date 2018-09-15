@@ -1,5 +1,6 @@
 package com.enpassio.reactiveway.network.model.model
 
+
 /**
  * Created by Greta Grigutė on 2018-09-13.
  *
@@ -9,4 +10,6 @@ package com.enpassio.reactiveway.network.model.model
 open class BaseResponse {
     var error: String? = null
         internal set
+
+
 }
