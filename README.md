@@ -33,4 +33,5 @@ _____________________________________________________________
 9. https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/ (done)
 
 **Notes app/RxJava networking-Retrofit-Gson example in NotesWithRxJavaRetrofitGson branch!**
+
 10. https://www.androidhive.info/RxJava/android-rxjava-networking-with-retrofit-gson-notes-app/ (done)
