@@ -27,3 +27,10 @@ _____________________________________________________________
 3. https://www.androidhive.info/RxJava/rxjava-operators-just-range-from-repeat/ (done)
 4. https://www.androidhive.info/RxJava/rxjava-operators-buffer-debounce/ (done)
 5. https://www.androidhive.info/RxJava/rxjava-understanding-observables/ (done)
+6. https://www.androidhive.info/RxJava/map-flatmap-switchmap-concatmap/ (done)
+7. https://www.androidhive.info/RxJava/rxjava-operators-concat-merge/ (done)
+8. https://www.androidhive.info/RxJava/mathematical-operators-rxjava/ (done)
+9. https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/ (done)
+
+**Notes app/RxJava networking-Retrofit-Gson example in NotesWithRxJavaRetrofitGson branch!**
+10. https://www.androidhive.info/RxJava/android-rxjava-networking-with-retrofit-gson-notes-app/ (done)
