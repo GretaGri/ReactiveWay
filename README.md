@@ -32,6 +32,5 @@ _____________________________________________________________
 7. https://www.androidhive.info/RxJava/rxjava-operators-concat-merge/ (done)
 8. https://www.androidhive.info/RxJava/mathematical-operators-rxjava/ (done)
 9. https://www.androidhive.info/RxJava/rxjava-operators-repeat-skip-take-takeuntil/ (done)
-10. https://www.androidhive.info/RxJava/android-rxjava-networking-with-retrofit-gson-notes-app/ (TODO)
-
-
+10. https://www.androidhive.info/RxJava/android-rxjava-networking-with-retrofit-gson-notes-app/ (done, 
+in NotesWithRxJavaRetrofitGson branch!)
