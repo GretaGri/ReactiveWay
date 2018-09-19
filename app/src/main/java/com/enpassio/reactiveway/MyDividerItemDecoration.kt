@@ -1,8 +1,5 @@
-package com.enpassio.reactiveway.utils
+package com.enpassio.reactiveway
 
-/**
- * Created by Greta Grigutė on 2018-09-12.
- */
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
@@ -11,6 +8,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
 import android.view.View
+
+
+/**
+ * Created by Greta Grigutė on 2018-09-19.
+ */
 
 class MyDividerItemDecoration(private val context: Context, orientation: Int, private val margin: Int) : RecyclerView.ItemDecoration() {
 
@@ -31,7 +33,7 @@ class MyDividerItemDecoration(private val context: Context, orientation: Int, pr
         mOrientation = orientation
     }
 
-    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+   override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         if (mOrientation == VERTICAL_LIST) {
             drawVertical(c, parent)
         } else {
@@ -50,7 +52,7 @@ class MyDividerItemDecoration(private val context: Context, orientation: Int, pr
                     .layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
             val bottom = top + mDivider!!.intrinsicHeight
-            mDivider.setBounds(left + dpToPx(margin), top, right - dpToPx(margin), bottom)
+            mDivider.setBounds(left + dpToPx(margin), top, right, bottom)
             mDivider.draw(c)
         }
     }
@@ -80,8 +82,8 @@ class MyDividerItemDecoration(private val context: Context, orientation: Int, pr
     }
 
     private fun dpToPx(dp: Int): Int {
-        val r = context.resources
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics))
+        val r = context.getResources()
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.getDisplayMetrics()))
     }
 
     companion object {
@@ -89,6 +91,7 @@ class MyDividerItemDecoration(private val context: Context, orientation: Int, pr
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
 
         val HORIZONTAL_LIST = LinearLayoutManager.HORIZONTAL
+
         val VERTICAL_LIST = LinearLayoutManager.VERTICAL
     }
 }
