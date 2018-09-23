@@ -17,18 +17,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Greta Grigutė on 2018-09-23.
  */
-class ApiClient {
-    companion object {
-        private val TAG = ApiClient::class.java.simpleName
-        private val REQUEST_TIMEOUT = 60
-    }
-
+object ApiClient {
+    private val TAG = ApiClient::class.java.simpleName
+    private val REQUEST_TIMEOUT = 60
     private var retrofit: Retrofit? = null
     private var okHttpClient: OkHttpClient? = null
 
 
-    val client: Retrofit
-        get() {
+   fun client(): Retrofit? {
             if (okHttpClient == null)
                 initOkHttp()
             val const = Const
@@ -40,7 +36,7 @@ class ApiClient {
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
             }
-            return retrofit!!
+            return retrofit
         }
 
     private fun initOkHttp() {

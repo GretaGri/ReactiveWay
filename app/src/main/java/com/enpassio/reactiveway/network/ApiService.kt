@@ -12,5 +12,5 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("contacts.php")
-    fun getContacts(@Query("source") source: String, @Query("search") query: String): Single<List<Contact>>
+    fun getContacts(@Query("source") source: String?, @Query("search") query: String?): Single<List<Contact>>
 }
