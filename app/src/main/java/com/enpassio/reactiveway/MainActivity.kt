@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
 import android.widget.Toast
 import com.android.volley.Response
 import com.android.volley.VolleyError
@@ -45,8 +44,9 @@ import org.json.JSONArray
             supportActionBar!!.setTitle(R.string.toolbar_title)
 
             recyclerView = findViewById(R.id.recycler_view)
-            contactList = ArrayList()
-            mAdapter = ContactsAdapter()
+            contactList = ArrayList <Contact>()
+            mAdapter = ContactsAdapter(this, contactList!!, this)
+
 
             // white background notification bar
             whiteNotificationBar(recyclerView)
@@ -56,7 +56,6 @@ import org.json.JSONArray
             recyclerView!!.itemAnimator = DefaultItemAnimator()
             recyclerView!!.addItemDecoration(MyDividerItemDecoration(this, DividerItemDecoration.VERTICAL, 36))
             recyclerView!!.adapter = mAdapter
-
             fetchContacts()
         }
 
@@ -68,7 +67,7 @@ import org.json.JSONArray
                     object : Response.Listener<JSONArray> {
                         override fun onResponse(response: JSONArray?) {
                             if (response == null) {
-                                Toast.makeText(applicationContext, "Couldn't fetch the contacts! Pleas try again.", Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, "Couldn't fetch the contacts! Please try again.", Toast.LENGTH_LONG).show()
                                 return
                             }
 
@@ -76,12 +75,17 @@ import org.json.JSONArray
 
                             }.type)
 
+                            Log.d("MainActivity", "items from json is: ${items}")
                             // adding contacts to contacts list
                             contactList!!.clear()
                             contactList!!.addAll(items)
 
+                            Log.d("MainActivity", "contactList is: ${contactList}")
+
                             // refreshing recycler view
                             mAdapter!!.notifyDataSetChanged()
+                          //  mAdapter = ContactsAdapter(this@MainActivity, contactList!!, this@MainActivity)
+
                         }
                     }, object : Response.ErrorListener {
                 override fun onErrorResponse(error: VolleyError) {
@@ -91,7 +95,7 @@ import org.json.JSONArray
                 }
             })
 
-            MyApplication.instance!!.addToRequestQueue(request)
+            MyApplication.instance?.addToRequestQueue(request)
         }
 
        override fun onCreateOptionsMenu(menu: Menu): Boolean {

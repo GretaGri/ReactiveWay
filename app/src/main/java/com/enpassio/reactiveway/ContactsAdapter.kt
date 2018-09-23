@@ -16,11 +16,9 @@ import com.bumptech.glide.request.RequestOptions
 /**
  * Created by Greta Grigutė on 2018-09-19.
  */
-class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Filterable {
-    private var contactListFiltered: List<Contact>? = null
-    private var context: Context? = null
-    private var contactList: List<Contact>? = null
-    private var listener: ContactsAdapterListener? = null
+class ContactsAdapter(val context: Context, var contactList: List<Contact>, val listener: ContactsAdapterListener) : RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Filterable {
+    private var contactListFiltered: List<Contact> = contactList
+
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var name: TextView
@@ -34,16 +32,9 @@ class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Fil
 
             view.setOnClickListener {
                 // send selected contact in callback
-                listener!!.onContactSelected(contactListFiltered!!.get(adapterPosition))
+                listener.onContactSelected(contactList.get(adapterPosition))
             }
         }
-    }
-
-    fun ContactsAdapter(context: Context, contactList: List<Contact>, listener: ContactsAdapterListener) {
-        this.context = context
-        this.listener = listener
-        this.contactList = contactList
-        this.contactListFiltered = contactList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -54,18 +45,18 @@ class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Fil
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val (name1, image, phone) = contactListFiltered!!.get(position)
+        val (name1, image, phone) = contactListFiltered.get(position)
         holder.name.text = name1
         holder.phone.text = phone
 
-        Glide.with(context!!)
+        Glide.with(context)
                 .load(image)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.thumbnail)
     }
 
     override fun getItemCount(): Int {
-        return contactListFiltered!!.size
+        return contactListFiltered.size
     }
 
     override fun getFilter(): Filter {
@@ -75,8 +66,8 @@ class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Fil
                 if (charString.isEmpty()) {
                     contactListFiltered = contactList
                 } else {
-                    val filteredList = ArrayList <Contact>()
-                    for (row in contactList!!) {
+                    val filteredList = ArrayList<Contact>()
+                    for (row in contactList) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
@@ -94,8 +85,10 @@ class ContactsAdapter: RecyclerView.Adapter<ContactsAdapter.MyViewHolder>(), Fil
             }
 
             override fun publishResults(charSequence: CharSequence, filterResults: Filter.FilterResults) {
-                contactListFiltered = filterResults.values as ArrayList<Contact>
-                notifyDataSetChanged()
+                if (filterResults.values != null) {
+                    contactListFiltered = filterResults.values as ArrayList<Contact>
+                    notifyDataSetChanged()
+                }
             }
         }
     }

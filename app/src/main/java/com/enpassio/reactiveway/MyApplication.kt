@@ -5,6 +5,7 @@ import com.android.volley.toolbox.Volley
 import com.android.volley.RequestQueue
 import android.app.Application
 import com.android.volley.Request
+import java.util.*
 
 
 /**
@@ -14,8 +15,7 @@ class MyApplication : Application() {
 
     private var mRequestQueue: RequestQueue? = null
 
-    val requestQueue: RequestQueue?
-        get() {
+    fun getRequestQueue (): RequestQueue? {
             if (mRequestQueue == null) {
                 mRequestQueue = Volley.newRequestQueue(applicationContext)
             }
@@ -31,15 +31,15 @@ class MyApplication : Application() {
     fun <T> addToRequestQueue(req: Request<T>, tag: String) {
         // set the default tag if tag is empty
         req.setTag(if (TextUtils.isEmpty(tag)) TAG else tag)
-        requestQueue!!.add(req)
+        getRequestQueue()!!.add(req)
     }
 
     fun <T> addToRequestQueue(req: Request<T>) {
         req.setTag(TAG)
-        requestQueue!!.add(req)
+        getRequestQueue()!!.add(req)
     }
 
-    fun cancelPendingRequests(tag: Any) {
+    fun cancelPendingRequests(tag: Objects) {
         if (mRequestQueue != null) {
             mRequestQueue!!.cancelAll(tag)
         }
