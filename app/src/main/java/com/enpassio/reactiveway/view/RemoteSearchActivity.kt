@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import com.enpassio.reactiveway.R
 import com.enpassio.reactiveway.adapter.ContactsAdapter
 import com.enpassio.reactiveway.network.ApiClient
@@ -19,7 +18,6 @@ import com.enpassio.reactiveway.network.ApiService
 import com.enpassio.reactiveway.network.model.Contact
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.jakewharton.rxbinding2.widget.TextViewTextChangeEvent
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -81,14 +79,9 @@ class RemoteSearchActivity : AppCompatActivity(), ContactsAdapter.ContactsAdapte
 
         disposable.add(publishSubject.debounce(300, TimeUnit.MILLISECONDS)
                 .distinctUntilChanged()
-                .switchMapSingle(object : Function<String, Single<List<Contact>>>() {
-                    @Throws(Exception::class)
-                   override fun apply(s: String): Single<List<Contact>> {
-                        return apiService!!.getContacts(null, s)
+                .switchMapSingle{s: String -> apiService!!.getContacts(null, s)
                                 .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                    }
-                })
+                                .observeOn(AndroidSchedulers.mainThread())}
                 .subscribeWith(observer))
 
 
