@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <color name="colorPrimary">#111</color>
-        <color name="colorPrimaryDark">#FFF</color>
-        <color name="colorAccent">#ea3732</color>
-        <color name="contact_name">#333333</color>
-        <color name="contact_number">#8c8c8c</color>
+        <color name="colorPrimary">#B91D44</color>
+        <color name="colorPrimaryDark">#B91D44</color>
+        <color name="colorAccent">#FF4081</color>
+        <color name="airline_name">#515151</color>
+        <color name="lbl_price">#787878</color>
+        <color name="departure">#dd000000</color>
+        <color name="tint_arrow">#6E6E6E</color>
+        <color name="duration">#dd595959</color>
 </resources>

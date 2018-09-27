@@ -1,9 +1,10 @@
 package com.enpassio.reactiveway.network
 
-import com.enpassio.reactiveway.network.model.Contact
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
+import com.enpassio.reactiveway.network.model.Price
+import com.enpassio.reactiveway.network.model.Ticket
 
 
 /**
@@ -11,6 +12,9 @@ import retrofit2.http.Query
  */
 interface ApiService {
 
-    @GET("contacts.php")
-    fun getContacts(@Query("source") source: String?, @Query("search") query: String?): Single<List<Contact>>
+    @GET("airline-tickets.php")
+    fun searchTickets(@Query("from") from: String, @Query("to") to: String): Single<List<Ticket>>
+
+    @GET("airline-tickets-price.php")
+    fun getPrice(@Query("flight_number") flightNumber: String, @Query("from") from: String, @Query("to") to: String): Single<Price>
 }

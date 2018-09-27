@@ -28,16 +28,6 @@
                     android:scheme="com.enpassio.reactiveway" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.LocalSearchActivity"
-            android:label="@string/activity_local_search"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
-            android:name=".view.RemoteSearchActivity"
-            android:label="@string/activity_remote_search"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>
